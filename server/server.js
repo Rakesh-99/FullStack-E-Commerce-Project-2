@@ -17,7 +17,7 @@ import cors from 'cors';
 
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/user/', userRouter);
 app.use(error);

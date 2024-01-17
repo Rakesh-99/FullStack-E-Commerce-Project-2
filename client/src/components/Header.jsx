@@ -1,20 +1,39 @@
-import React, { useState, } from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useEffect, useState, } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { FaShoppingCart } from 'react-icons/fa';
 import { IoMenu } from "react-icons/io5";
 import { RxCross2 } from "react-icons/rx";
 import { MdOutlineShoppingBag } from "react-icons/md";
+import { useDispatch, useSelector } from 'react-redux';
+import { logoutUser } from '../features/authSlice';
+
+
+
+
+
 
 
 const Header = () => {
 
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+
+    const { user } = useSelector((state) => state.app);
+
 
     const [isClick, setIsClick] = useState(false);
 
-
     const toggleMenu = () => {
         setIsClick(!isClick);
+    };
+
+
+    const handleLogout = () => {
+        dispatch(logoutUser({ navigate }));
     }
+
+
 
 
     return (
@@ -27,7 +46,7 @@ const Header = () => {
 
                     <div className="flex items-center  text-white hover:text-red-500 cursor-pointer">
                         <MdOutlineShoppingBag size={25} />
-                        <NavLink to={'/'} className={`${window.location.pathname === '/' && 'border-b border-red-500 text-red-400'}`}>E-Commerce</NavLink>
+                        <NavLink to={'/'}>E-Commerce</NavLink>
                     </div>
 
                     <div className="flex gap-5">
@@ -39,12 +58,16 @@ const Header = () => {
                         <input type="search" name="" className='py-1 px-2 rounded-sm bg-gray-800 outline-none' placeholder='Search Item..' />
                     </div>
 
-                    <div className="flex gap-5">
+                    {
+                        !user ? <div className="flex gap-5">
+                            <NavLink to={'/register'} className={`hover:text-green-300 ${window.location.pathname === '/register' && 'border-b border-green-500 text-green-300'}`}>Register</NavLink>
 
-                        <NavLink to={'/register'} className={`hover:text-green-300 ${window.location.pathname === '/register' && 'border-b border-green-500 text-green-300'}`}>Register</NavLink>
+                            <NavLink to={'/login'} className={`hover:text-blue-300 ${window.location.pathname === '/login' && 'border-b border-blue-500 text-blue-300'}`}>Login</NavLink>
+                        </div> : <><NavLink onClick={handleLogout} className='bg-red-900 text-white rounded-sm py-1 px-2'>Logout</NavLink></>
+                    }
 
-                        <NavLink to={'/login'} className={`hover:text-blue-300 ${window.location.pathname === '/login' && 'border-b border-blue-500 text-blue-300'}`}>Login</NavLink>
-                    </div>
+
+
 
                     <div className="">
                         <NavLink><FaShoppingCart className='hover:text-orange-200' /></NavLink>
@@ -69,7 +92,7 @@ const Header = () => {
 
                         <span><FaShoppingCart color={'white'} size={18} /></span>
 
-                        <span onClick={toggleMenu}>{isClick ? <RxCross2 size={24} color='white' /> : <IoMenu size={25} color='white' />}</span>
+                        <span className='cursor-pointer' onClick={toggleMenu}>{isClick ? <RxCross2 size={24} color='white' /> : <IoMenu size={25} color='white' />}</span>
                     </div>
 
 

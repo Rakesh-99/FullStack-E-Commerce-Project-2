@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Layout from '../components/Layout'
 import registerImg from '../Assests/registerImg.jpg';
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import axios from 'axios';
 import LoaderAnimation from '../components/Loader/Loader';
+import { addSignupUser } from '../features/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 
 
@@ -14,9 +15,19 @@ import LoaderAnimation from '../components/Loader/Loader';
 
 const Register = () => {
 
-    const [loader, setLoader] = useState(false);
-
+    const dispatch = useDispatch();
     const navigate = useNavigate();
+
+
+    const { error, loading } = useSelector((state) => state.app);
+
+
+    useEffect(() => {
+        error && toast.error(error);
+    }, [error]);
+
+
+
     const [registerData, setRegisterData] = useState({
         fullname: '',
         email: '',
@@ -36,7 +47,6 @@ const Register = () => {
     }
 
 
-
     // Validating form Data :
 
     const validateForm = (values) => {
@@ -52,6 +62,7 @@ const Register = () => {
             return false;
         } else if (values.fullname.length > 30) {
             toast.error('User name can not exceed 30 char!');
+            return false;
         }
 
         // Email :
@@ -73,32 +84,9 @@ const Register = () => {
             return false;
         } else if (!values.location) {
             toast.error('Location is required!');
-
+            return false;
         } else {
-            // Performing post req for registering user only if the validation gets successful :
-
-            try {
-                setLoader(true);
-                axios.post('/api/user/register', registerData)
-                    .then((res) => {
-                        if (res.status === 200) {
-                            setLoader(false);
-                            toast.success('User has been registered!');
-                            navigate('/login');
-                            return false;
-                        }
-                    }).catch((err) => {
-                        setLoader(false);
-                        if (err) {
-                            toast.error('Email is already registered!');
-                        }
-                    });
-            } catch (error) {
-                setLoader(false);
-                if (error) {
-                    toast.error('Internal Server Error!');
-                }
-            }
+            dispatch(addSignupUser({ registerData, navigate }));
         }
     };
 
@@ -113,17 +101,17 @@ const Register = () => {
             <h1 className='text-center mt-14  font-semibold text-transparent text-4xl bg-clip-text 
             bg-gradient-to-r from-cyan-500  to-green-900'>Register</h1>
 
-            <div className="flex w-full justify-center space-x-2">
+            <div className="flex w-full flex-col items-center md:flex-row justify-center space-x-2">
 
                 {/* Left Content  */}
                 <div className="w-1/4 flex justify-center">
-                    <img src={registerImg} alt="img" className='w-96 bg-cover' />
+                    <img src={registerImg} alt="img" className='w-96 bg-cover rounded-md' />
                 </div>
 
                 {/* Right Content  */}
                 <div className=" flex w-1/4 justify-center my-10">
                     {/* Condition for Spinner Animation while fetching data  */}
-                    {loader === true ? <div className="flex h-full w-full justify-center items-center text-center"><LoaderAnimation /></div>
+                    {loading === true ? <div className="flex h-full w-full justify-center items-center text-center"><LoaderAnimation /></div>
                         :
                         <form action="" className='flex flex-col w-80 space-y-4 ' onSubmit={submitHandle}>
 
@@ -144,7 +132,6 @@ const Register = () => {
                             <p className='text-sm text-center'>Already have an account? <Link to={'/login'} className='text-green-700 cursor-pointer hover:underline'>Login</Link></p>
                         </form>
                     }
-
                 </div>
             </div>
         </Layout>

@@ -29,6 +29,14 @@ const userSchema = new mongoose.Schema({
     role: {
         type: Number,
         default: 0
+    },
+    // This token is for verifying user
+    token: {
+        type: String,
+    },
+    // This token works when user forget their password 
+    verifyToken: {
+        type: String,
     }
 },
     { timestamps: true }

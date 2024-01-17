@@ -1,9 +1,9 @@
 /* HTML: <div class="loader"></div> */
 .loader {
   --w:10ch;
-  font-weight: bold;
+  font-weight: bolder;
   font-family: monospace;
-  font-size: 30px;
+  font-size: 18px;
   line-height: 1.4em;
   letter-spacing: var(--w);
   width: var(--w);
